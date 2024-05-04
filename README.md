@@ -1,3 +1,10 @@
+# ECG Monitoring
+
+## About the project
+
+**ECG Monitoring**  is an application that allows you to view the patient's ECG chart and keep records of the patient's health
+
+--- 
 # Development server
 
 - ### Set environment variables
