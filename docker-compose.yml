@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  server:
+    build: ./server/
+    container_name: diplom-server
+    working_dir: /var/www/server
+    ports:
+      - "$SERVER_PORT:8000"
+    volumes:
+      - ./server/:/var/www/server
+      - ./client/:/var/www/client/
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    stdin_open: true
+    environment:
+      - PGHOST=$DATABASE_HOST
+    env_file:
+      - .env
+    depends_on:
+      - database
+
+  database:
+    container_name: diplom-database
+    image: postgres:latest
+    volumes:
+      - ./initial.sql:/docker-entrypoint-initdb.d/initial.sql
+    environment:
+      - POSTGRES_USER=diplom
+      - POSTGRES_PASSWORD=diplom
+      - POSTGRES_DB=diplom
+    expose:
+      - 5432
+
+  client:
+    image: node:latest
+    container_name: diplom-client
+    working_dir: /var/www/client/
+    command: yarn start
+    environment:
+      - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
+    ports:
+      - "$CLIENT_PORT:3000"
+    volumes:
+      - ./server/:/var/www/server/
+      - ./client/:/var/www/client/
+
