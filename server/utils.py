@@ -2,6 +2,9 @@ import datetime
 import os
 
 import hashlib
+import random
+import string
+
 import jwt
 
 import models
@@ -58,36 +61,79 @@ def verify_password_hash(password, hashed_password):
     return generate_password_hash(password + "salt") == hashed_password
 
 
-def send_password(email, password, phone):
+def create_message_account_create(email, password, phone):
     msg = MIMEMultipart()
     msg["From"] = EMAIL_FROM
     msg["To"] = email
     msg["Subject"] = "Account successful created"
     html_content = """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Account Creation Successful</title>
-    </head>
-    <body>
-        <h1>Account Creation Successful</h1>
-        <p>Your account has been successfully created with the following details:</p>
-        <ul>
-            <li><strong>Email:</strong> {email}</li>
-            <li><strong>Phone:</strong> {phone}</li>
-            <li><strong>Password:</strong> {password}</li>
-        </ul>
-        <p>You can use email or phone for login </p>
-    </body>
-    </html>
-    """.format(
+       <!DOCTYPE html>
+       <html lang="en">
+       <head>
+           <meta charset="UTF-8">
+           <meta name="viewport" content="width=device-width, initial-scale=1.0">
+           <title>Account Creation Successful</title>
+       </head>
+       <body>
+           <h1>Account Creation Successful</h1>
+           <p>Your account has been successfully created with the following details:</p>
+           <ul>
+               <li><strong>Email:</strong> {email}</li>
+               <li><strong>Phone:</strong> {phone}</li>
+               <li><strong>Password:</strong> {password}</li>
+           </ul>
+           <p>You can use email or phone for login </p>
+       </body>
+       </html>
+       """.format(
         email=email, phone=phone, password=password
     )
 
     msg.attach(MIMEText(html_content, "html"))
+    return msg
+
+
+def create_message_account_verify_mail(email, first_name, last_name, verification_code):
+    msg = MIMEMultipart()
+    msg["From"] = EMAIL_FROM
+    msg["To"] = email
+    msg["Subject"] = "Email Verification Code ECG Monitoring"
+    html_content = """
+       <!DOCTYPE html>
+       <html lang="en">
+       <head>
+           <meta charset="UTF-8">
+           <meta name="viewport" content="width=device-width, initial-scale=1.0">
+           <title>Email Verification Code</title>
+       </head>
+       <body>
+           <h1>Email Verification Code</h1>
+           <p>Dear {first_name} {last_name},</p>
+           <p>Your email verification code is:</p>
+           <p><strong>{verification_code}</strong></p>
+           <p>Please use this code to verify your email address and complete the registration process.</p>
+           <p>If you did not request this verification, please ignore this email.</p>
+           <p>Thank you!</p>
+       </body>
+       </html>
+    """.format(
+        first_name=first_name, last_name=last_name, verification_code=verification_code
+    )
+
+    msg.attach(MIMEText(html_content, "html"))
+    return msg
+
+
+def send_message(msg):
     with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as server:
         server.starttls()
         server.login(EMAIL_FROM, EMAIL_PASSWORD)
         server.send_message(msg)
+
+
+def generate_password(seed):
+    random.seed(seed)
+    return "".join(
+        random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase)
+        for _ in range(21)
+    )

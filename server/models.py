@@ -52,11 +52,14 @@ class ECGDiagram(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     patient_id = Column(Integer, ForeignKey("Patient.id"))
     patient = relationship("Patient", back_populates="ecg_diagrams")
+    ecg_date = Column(String)
     data_values = Column(String)
+
+
+class VerifyEmail(Base):
+    __tablename__ = "Verify_email"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String, unique=True)
+    verification_code = Column(String)
     time_data = Column(String)
-
-    def get_ecg_values(self):
-        return [float(value) for value in self.data_values.split(",")]
-
-    def get_time_values(self):
-        return [float(time) for time in self.time_data.split(",")]
+    is_verify = Column(Boolean)
