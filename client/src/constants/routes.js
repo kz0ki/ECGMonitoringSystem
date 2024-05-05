@@ -7,6 +7,6 @@ export const PATIENTS = "/patients";
 
 export const MY_ECG = "/my-ecg/:id";
 
-export const PATIENT_ECG = "/patients/:str";
+export const PATIENT_ECG = "/patients/:id";
 
-export const ADD_PATIENT = "/patients/:str";
+export const ADD_PATIENT = "/patients/add";

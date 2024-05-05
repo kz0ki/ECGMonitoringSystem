@@ -5,12 +5,15 @@ import * as routes from "constants/routes";
 import { BrowserRouter } from "react-router-dom";
 import Loader from "components/Loader";
 import Frame from "components/Frame";
+import { PATIENT_ECG } from "constants/routes";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/LogIn"));
 const Patients = lazy(() => import("./pages/Patients"));
 const Profile = lazy(() => import("./pages/Profile"));
 const SignUp = lazy(() => import("./pages/SignUp"));
+const AddPatient = lazy(() => import("./pages/AddPatient"));
+const PatientECG = lazy(() => import("./pages/PatientECG"));
 const App = () => {
   const APP_ROUTES = [
     {
@@ -37,6 +40,16 @@ const App = () => {
       id: "5",
       path: routes.SIGN_UP,
       render: (props, user) => <SignUp {...props} {...user} />,
+    },
+    {
+      id: "6",
+      path: routes.ADD_PATIENT,
+      render: (props, user) => <AddPatient {...props} {...user} />,
+    },
+    {
+      id: "7",
+      path: routes.PATIENT_ECG,
+      render: (props, user) => <PatientECG {...props} {...user} />,
     },
   ];
 

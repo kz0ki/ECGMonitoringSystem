@@ -25,3 +25,45 @@ export const login = async (values) => {
 export const fetchMe = async () => {
   return await axios.post(API_URL + "/api/me", {}, { headers: getHeaders() });
 };
+
+export const getVerifyCode = async (email, first_name, last_name) => {
+  return await axios.post(
+    API_URL + "/api/get-verify-code",
+    {
+      email: email,
+      first_name: first_name,
+      last_name: last_name,
+    },
+    { headers: getHeaders() },
+  );
+};
+export const checkVerifyCode = async (email, code) => {
+  return await axios.post(
+    API_URL + "/api/check-verify-code",
+    {
+      email: email,
+      code: code,
+    },
+    { headers: getHeaders() },
+  );
+};
+
+export const register = async (values) => {
+  return await axios.post(API_URL + "/api/register", values, {
+    headers: getHeaders(),
+  });
+};
+export const getUserECG = async (user_id) => {
+  // return await axios.get(API_URL + ` /api/user-ecg-diagrams`, {
+  //   headers: getHeaders(),
+  //   params: {
+  //     user_id: user_id,
+  //   },
+  // });
+  // };
+  return await axios.get(API_URL + "/api/user-ecg-diagrams", {
+    params: {
+      user_id: user_id,
+    },
+  });
+};
