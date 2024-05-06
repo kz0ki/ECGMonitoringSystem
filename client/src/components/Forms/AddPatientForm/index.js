@@ -31,6 +31,7 @@ const AddPatientForm = ({
       }}
       onSubmit={(variables, form) => {
         handleAddPatient(variables);
+        form.resetForm();
       }}
       validationSchema={ValidationAddPatient}
     >
@@ -295,7 +296,7 @@ const AddPatientForm = ({
             color={"success"}
             onClick={submitForm}
             variant={"contained"}
-            disabled={!values.verify}
+            // disabled={!values.verify}
           >
             ADD PATIENT
           </Button>
