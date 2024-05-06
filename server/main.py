@@ -17,8 +17,7 @@ from utils import (
 )
 import random
 from fastapi.middleware.cors import CORSMiddleware
-
-from pydantic import BaseModel
+from schema import *
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -54,7 +53,7 @@ def insert_users(session, num_users):
             first_name="test",
             last_name="test",
             phone="+380666666661",
-            date_of_birth="12:03:2003",
+            date_of_birth="2003-03-12",
             gender="Male",
             address="test",
             sur_name="test",
@@ -66,7 +65,7 @@ def insert_users(session, num_users):
             first_name="test",
             last_name="test",
             phone="+380666666662",
-            date_of_birth="12:03:2003",
+            date_of_birth="2003-03-12",
             gender="Male",
             address="test",
             sur_name="test",
@@ -78,7 +77,7 @@ def insert_users(session, num_users):
             first_name="test",
             last_name="test",
             phone="+380666666663",
-            date_of_birth="12:03:2003",
+            date_of_birth="2003-03-12",
             gender="Male",
             address="test",
             sur_name="test",
@@ -90,7 +89,7 @@ def insert_users(session, num_users):
             first_name="test",
             last_name="test",
             phone="+380666666664",
-            date_of_birth="12:03:2003",
+            date_of_birth="2003-03-12",
             gender="Male",
             address="test",
             sur_name="test",
@@ -1137,56 +1136,9 @@ def insert_users(session, num_users):
     # session.commit()
 
 
-#
-
 session = next(db())
 
 insert_users(session, 10)
-
-
-class UserMe(BaseModel):
-    token: str
-
-
-class CodeGenerate(BaseModel):
-    email: str
-    first_name: str
-    last_name: str
-
-
-class CodeVerify(BaseModel):
-    code: int
-    email: str
-
-
-class UserLogin(BaseModel):
-    emailOrPhone: str
-    password: str
-
-
-class UserDiagram(BaseModel):
-    user_id: str
-
-
-class UserRegister(BaseModel):
-    email: str
-    phone: str
-    first_name: str
-    last_name: str
-    sur_name: str
-    date_of_birth: str
-    gender: str
-    address: str
-
-
-@app.get("/")
-async def root():
-    return {"message": "Hello 113212323"}
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
 
 
 def auth_middleware(
@@ -1408,22 +1360,40 @@ async def check_verify_code(
     verify_mail = (
         db.query(models.VerifyEmail).filter(models.VerifyEmail.email == email).first()
     )
-    print(verify_mail.verification_code)
-    print(code)
     if verify_mail:
         if verify_mail.verification_code == str(code):
             verify_mail.is_verify = True
             return {"success": True}
         return {"success": False}
+    return {"success": False}
     # background_tasks.add_task(
     #     send_message(create_message_account_create(email, password, phone)), email
     # )
+
+
+@app.post("/api/change-password")
+async def change_password(
+    passwordData: UserPasswordChange,
+    user: Optional[dict] = Depends(auth_middleware),
+    db: Session = Depends(db),
+):
     pass
 
 
-@app.post("/change-password")
-async def change_password(phone: str, email: str, old_password: str, new_password: str):
-    pass
+@app.post("/api/update-account")
+async def update_account(
+    new_user_data: UserUpdate,
+    user: Optional[dict] = Depends(auth_middleware),
+    db: Session = Depends(db),
+):
+    db_user = db.query(models.User).filter(models.User.id == user.id).first()
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    for field, value in new_user_data.dict(exclude_unset=True).items():
+        setattr(db_user, field, value)
+    db.commit()
+
+    return {"success": True, "message": "Account updated successfully"}
 
 
 @app.get("/users")
@@ -1505,7 +1475,6 @@ async def get_users(
             (column.name, getattr(doctor, column.name))
             for column in doctor.__table__.columns
         )
-    print(user_in_doctor_table)
     if user_in_doctor_table is not None:
         res["patients"] = (
             db.query(models.Patient)

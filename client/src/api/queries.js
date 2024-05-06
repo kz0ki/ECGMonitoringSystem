@@ -1,5 +1,5 @@
 import $api from "./axiosInst";
-import { fetchToken } from "hocs/hocs";
+import { clearToken, fetchToken } from "hocs/hocs";
 import { API_URL } from "../constants";
 import axios from "axios";
 
@@ -63,6 +63,18 @@ export const getUserECG = async (user_id) => {
 
 export const getAddInform = async () => {
   return await axios.get(API_URL + "/api/additional-data", {
+    headers: getHeaders(),
+  });
+};
+
+export const updateUser = async (data) => {
+  return await axios.post(API_URL + "/api/update-account", data, {
+    headers: getHeaders(),
+  });
+};
+
+export const changePassword = async () => {
+  return await axios.post(API_URL + "/api/change-password", {
     headers: getHeaders(),
   });
 };
