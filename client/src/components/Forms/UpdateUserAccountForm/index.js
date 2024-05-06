@@ -104,7 +104,7 @@ const UpdateUserAccountForm = ({
                   variant="outlined"
                   size="small"
                   value={values.phone}
-                  onChange={(e) => setFieldValue("sur_name", e.target.value)}
+                  onChange={(e) => setFieldValue("phone", e.target.value)}
                   error={errors.phone && touched.phone}
                   component={TextField}
                   helperText={errors.phone && touched.phone ? errors.phone : ""}
