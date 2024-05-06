@@ -22,11 +22,11 @@ class User(Base):
     is_archived = Column(Boolean)
 
     def check_password(self, password):
-        # check = verify_password_hash(
-        #     password,
-        #     self.password,
-        # )
-        return password == self.password
+        check = verify_password_hash(
+            password,
+            self.password,
+        )
+        return check
 
 
 class Patient(Base):

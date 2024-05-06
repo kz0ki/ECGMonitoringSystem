@@ -73,7 +73,14 @@ const AddPatient = (props) => {
             handleAddPatient(variables);
           }}
         >
-          {({ values, submitForm, setFieldValue, errors, touched }) => (
+          {({
+            values,
+            submitForm,
+            setFieldValue,
+            errors,
+            touched,
+            resetForm,
+          }) => (
             <Form>
               <Box className={classes.wrapperForm}>
                 <Box className={classes.field}>
@@ -239,6 +246,7 @@ const AddPatient = (props) => {
                                   if (response?.data?.success) {
                                     setFieldValue("verify", true);
                                     setEmailVerify(false);
+                                    resetForm();
                                   }
                                 };
                                 handle();

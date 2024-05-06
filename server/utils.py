@@ -58,7 +58,7 @@ def generate_password_hash(password):
 
 
 def verify_password_hash(password, hashed_password):
-    return generate_password_hash(password + "salt") == hashed_password
+    return generate_password_hash(password) == hashed_password
 
 
 def create_message_account_create(email, password, phone):

@@ -50,7 +50,7 @@ def insert_users(session, num_users):
     users = [
         models.User(
             email="test@gmail.com",
-            password="<PASSWORD>",
+            password="51f813047b77b5558bbfd4eb6658870a",
             first_name="test",
             last_name="test",
             phone="+380666666661",
@@ -62,7 +62,7 @@ def insert_users(session, num_users):
         ),
         models.User(
             email="test1@gmail.com",
-            password="<PASSWORD>",
+            password="51f813047b77b5558bbfd4eb6658870a",
             first_name="test",
             last_name="test",
             phone="+380666666662",
@@ -74,7 +74,7 @@ def insert_users(session, num_users):
         ),
         models.User(
             email="test2@gmail.com",
-            password="<PASSWORD>",
+            password="51f813047b77b5558bbfd4eb6658870a",
             first_name="test",
             last_name="test",
             phone="+380666666663",
@@ -86,7 +86,7 @@ def insert_users(session, num_users):
         ),
         models.User(
             email="admin@admin.com",
-            password="<PASSWORD>",
+            password="51f813047b77b5558bbfd4eb6658870a",
             first_name="test",
             last_name="test",
             phone="+380666666664",
@@ -1366,7 +1366,7 @@ async def register(
 @app.post("/api/get-verify-code")
 async def get_verify_code(
     data: CodeGenerate,
-    background_tasks: BackgroundTasks,
+    # background_tasks: BackgroundTasks,
     doctor: Optional[dict] = Depends(auth_middleware),
     db: Session = Depends(db),
 ):
@@ -1388,13 +1388,13 @@ async def get_verify_code(
     )
     db.add(verify_email)
     db.commit()
-    background_tasks.add_task(
-        send_message(
-            create_message_account_verify_mail(
-                email, first_name, last_name, verification_code
-            )
-        ),
-    )
+    # background_tasks.add_task(
+    send_message(
+        create_message_account_verify_mail(
+            email, first_name, last_name, verification_code
+        )
+    ),
+    # )
     success = True
     return {"success": success}
 
@@ -1461,7 +1461,6 @@ async def get_users(db: Session = Depends(db)):
     return users
 
 
-# user: UserDiagram
 @app.get("/api/user-ecg-diagrams")
 async def get_users_diagrams(user_id: int, db: Session = Depends(db)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
@@ -1480,3 +1479,37 @@ async def get_users_diagrams(user_id: int, db: Session = Depends(db)):
             for column in patient.__table__.columns
         )
     return {"ecg_diagrams": ecg_diagrams, "patient": res}
+
+
+@app.get("/api/additional-data")
+async def get_users(
+    user: Optional[dict] = Depends(auth_middleware), db: Session = Depends(db)
+):
+    res = {}
+    user_in_doctor_table = (
+        db.query(models.Doctor).filter(models.Doctor.user_id == user.id).first()
+    )
+    user_in_patient_table = (
+        db.query(models.Patient).filter(models.Patient.user_id == user.id).first()
+    )
+    if user_in_patient_table is not None:
+        my_doctor = (
+            db.query(models.Doctor)
+            .filter(models.Doctor.id == user_in_patient_table.doctor_id)
+            .first()
+        )
+        doctor = (
+            db.query(models.User).filter(models.User.id == my_doctor.user_id).first()
+        )
+        res["my_doctor"] = dict(
+            (column.name, getattr(doctor, column.name))
+            for column in doctor.__table__.columns
+        )
+    print(user_in_doctor_table)
+    if user_in_doctor_table is not None:
+        res["patients"] = (
+            db.query(models.Patient)
+            .filter(models.Patient.doctor_id == user_in_doctor_table.id)
+            .count()
+        )
+    return res

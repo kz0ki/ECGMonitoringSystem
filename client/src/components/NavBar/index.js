@@ -86,7 +86,7 @@ const NavBar = (props) => {
                     to={routes.ADD_PATIENT}
                     style={{ textDecoration: "none", color: "#626B74" }}
                   >
-                    <Button color="inherit">ADD_PATIENT</Button>
+                    <Button color="inherit">ADD PATIENT</Button>
                   </NavLink>
                 </>
               ) : null}

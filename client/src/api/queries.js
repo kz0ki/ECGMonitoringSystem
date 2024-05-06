@@ -54,16 +54,15 @@ export const register = async (values) => {
   });
 };
 export const getUserECG = async (user_id) => {
-  // return await axios.get(API_URL + ` /api/user-ecg-diagrams`, {
-  //   headers: getHeaders(),
-  //   params: {
-  //     user_id: user_id,
-  //   },
-  // });
-  // };
   return await axios.get(API_URL + "/api/user-ecg-diagrams", {
     params: {
       user_id: user_id,
     },
+  });
+};
+
+export const getAddInform = async () => {
+  return await axios.get(API_URL + "/api/additional-data", {
+    headers: getHeaders(),
   });
 };
