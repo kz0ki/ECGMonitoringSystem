@@ -73,8 +73,8 @@ export const updateUser = async (data) => {
   });
 };
 
-export const changePassword = async () => {
-  return await axios.post(API_URL + "/api/change-password", {
+export const changePassword = async (data) => {
+  return await axios.post(API_URL + "/api/change-password", data, {
     headers: getHeaders(),
   });
 };

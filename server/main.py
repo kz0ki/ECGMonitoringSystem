@@ -1377,7 +1377,16 @@ async def change_password(
     user: Optional[dict] = Depends(auth_middleware),
     db: Session = Depends(db),
 ):
-    pass
+    db_user = db.query(models.User).filter(models.User.id == user.id).first()
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.check_password(passwordData.old_password):
+        if passwordData.new_password1 == passwordData.new_password2:
+            setattr(db_user, "password", passwordData.new_password1)
+            db.commit()
+            return {"success": True}
+        return {"success": False, "message": "New passwords do not match"}
+    return {"success": False, "message": "Wrong password"}
 
 
 @app.post("/api/update-account")

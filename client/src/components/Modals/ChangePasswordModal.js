@@ -35,7 +35,7 @@ const ChangePasswordModal = ({ isOpen, handleClose, handleChangePassword }) => {
           </Box>
           <ChangePasswordForm
             handleClose={handleClose}
-            handleChangePassword={handleChangePassword}
+            handleChangePass={handleChangePassword}
           />
         </Box>
       </Modal>

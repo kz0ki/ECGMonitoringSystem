@@ -2,6 +2,7 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import { Field, Form, Formik } from "formik";
 import { Box, Button, InputLabel, TextField } from "@mui/material";
+import ValidationChangePassword from "components/Forms/ChangePasswordForm/validation";
 
 const useStyles = makeStyles(() => ({
   wrapper: {},
@@ -15,10 +16,11 @@ const ChangePasswordForm = ({ handleChangePass, handleClose }) => {
         new_password1: null,
         new_password2: null,
       }}
-      onSubmit={(variables) => {
-        handleChangePass(variables);
+      onSubmit={(values) => {
+        handleChangePass(values);
         handleClose();
       }}
+      validationSchema={ValidationChangePassword}
     >
       {({ values, submitForm, setFieldValue, errors, touched, resetForm }) => (
         <Form>
@@ -30,12 +32,12 @@ const ChangePasswordForm = ({ handleChangePass, handleClose }) => {
               <Field
                 name="old_password"
                 id="old_password"
-                type="text"
+                type="password"
                 variant="outlined"
                 size="small"
                 style={{ width: "100%" }}
                 value={values.old_password}
-                onChange={(e) => setFieldValue("first_name", e.target.value)}
+                onChange={(e) => setFieldValue("old_password", e.target.value)}
                 error={errors.old_password && touched.old_password}
                 component={TextField}
                 helperText={
@@ -52,7 +54,7 @@ const ChangePasswordForm = ({ handleChangePass, handleClose }) => {
               <Field
                 name="new_password1"
                 id="new_password1"
-                type="text"
+                type="password"
                 variant="outlined"
                 size="small"
                 style={{ width: "100%" }}
@@ -74,7 +76,7 @@ const ChangePasswordForm = ({ handleChangePass, handleClose }) => {
               <Field
                 name="new_password2"
                 id="new_password2"
-                type="text"
+                type="password"
                 variant="outlined"
                 size="small"
                 style={{ width: "100%" }}

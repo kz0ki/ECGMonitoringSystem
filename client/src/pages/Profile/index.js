@@ -12,7 +12,12 @@ import {
   Typography,
 } from "@mui/material";
 import { formatFullName } from "../../utils";
-import { fetchMe, getAddInform, updateUser } from "../../api/queries";
+import {
+  changePassword,
+  fetchMe,
+  getAddInform,
+  updateUser,
+} from "../../api/queries";
 import { Field, Form, Formik } from "formik";
 import ChangePasswordModal from "components/Modals/ChangePasswordModal";
 import UpdateUserAccountForm from "components/Forms/UpdateUserAccountForm";
@@ -71,8 +76,24 @@ const Profile = (props) => {
   }, []);
 
   const handleChangePassword = async (values) => {
-    console.log(values);
-    const response = null;
+    const response = await changePassword(values);
+    setEditData(false);
+    if (response) {
+      if (!response?.data?.success) {
+        setStatusUpdate(["Password didnt update!", false]);
+        setTimeout(() => {
+          setStatusUpdate(null);
+        }, 1500);
+      }
+      if (response.data?.success) {
+        setStatusUpdate(["Password updated success!", true]);
+        setTimeout(() => {
+          setStatusUpdate(null);
+        }, 1500);
+      }
+    }
+    const userME = await fetchMe();
+    setUser(userME?.data?.user);
   };
   const handleClose = () => {
     setOpenChangePass((prevState) => !prevState);
