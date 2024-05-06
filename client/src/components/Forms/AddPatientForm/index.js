@@ -6,8 +6,9 @@ import {
   NativeSelect,
   TextField,
 } from "@mui/material";
-import { checkVerifyCode, getVerifyCode } from "../../../api/queries";
+import { checkVerifyCode, getVerifyCode } from "api/queries";
 import React from "react";
+import ValidationAddPatient from "components/Forms/AddPatientForm/validation";
 
 const AddPatientForm = ({
   classes,
@@ -31,6 +32,7 @@ const AddPatientForm = ({
       onSubmit={(variables, form) => {
         handleAddPatient(variables);
       }}
+      validationSchema={ValidationAddPatient}
     >
       {({ values, submitForm, setFieldValue, errors, touched, resetForm }) => (
         <Form>
